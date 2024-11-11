@@ -4,6 +4,7 @@ const PORTA = 3000
 
 const PRODUTOS = []
 
+// Adiciona middleware que faz parse de JSON 
 app.use(express.json());
 
 app.get('/produtos', (req, res) => {
