@@ -1,8 +1,21 @@
 const express = require('express')
+const cors = require('cors');
+
 const app = express()
 const PORTA = 3000
 
 const PRODUTOS = []
+
+// Habilita CORS para todas as origens
+app.use(cors())
+
+// Habilita CORS para origens específicas
+// app.use(cors({
+//   origin: 'http://meusite.com', // Permite somente essa origem
+//   methods: ['GET', 'POST'],     // Permite apenas métodos específicos
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
+// }))
+
 
 // Adiciona middleware que faz parse de JSON 
 app.use(express.json());
