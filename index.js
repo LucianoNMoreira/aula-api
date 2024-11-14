@@ -28,7 +28,7 @@ app.post('/produtos', (req, res) => {
   const produto = req.body
 
   // Obtém o último ID de produtos OU zero, caso não exista
-  let ultimoId = Math.max(PRODUTOS.map((p) => p.id)) || 0
+  let ultimoId = Math.max(...PRODUTOS.map((p) => p.id)) || 0
   // Atribui o próximo ID para o novo produto
   produto.id = ultimoId + 1
   PRODUTOS.push(produto)
