@@ -38,8 +38,8 @@ class Produto {
 
 module.exports = Produto
 
-// const produto = new Produto(null, 'Produto 1', 1000);
-// console.log(produto.nome)
-// console.log(produto.getNome())
-// produto.setNome('Novo nome')
-// console.log(produto.getNome())
+const produto = new Produto(null, 'Produto 1', 1000)
+console.log(produto.nome) // Produto 1
+console.log(produto.getNome()) // Produto 1
+produto.setNome('Novo nome')
+console.log(produto.getNome()) // Novo nome
