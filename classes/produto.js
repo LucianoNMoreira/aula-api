@@ -12,7 +12,6 @@ class Produto {
 
 }
 
-// export default Produto
 module.exports = Produto
 
 // const produto = new Produto(null, 'Produto 1', 1000);
