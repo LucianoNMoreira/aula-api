@@ -1,4 +1,5 @@
 require('dotenv').config()
+const Produto = require('./classes/produto.js')
 
 const express = require('express')
 const cors = require('cors');
@@ -18,7 +19,6 @@ app.use(cors())
 //   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
 // }))
 
-
 // Adiciona middleware que faz parse de JSON 
 app.use(express.json());
 
@@ -27,13 +27,13 @@ app.get('/produtos', (req, res) => {
 })
 
 app.post('/produtos', (req, res) => {
-  const produto = req.body
-
   // Obtém o último ID de produtos OU zero, caso não exista
   const ids = PRODUTOS.map((p) => p.id)
   let ultimoId = ids.length > 0 ? Math.max(...ids) : 0
-  // Atribui o próximo ID para o novo produto
-  produto.id = ultimoId + 1
+  const id = ultimoId + 1
+
+  const produto = new Produto(id, req.body.nome, req.body.valor)
+
   PRODUTOS.push(produto)
 
   res.send(produto)
@@ -57,11 +57,14 @@ app.put('/produtos/:id', (req, res) => {
   const produtoIndex = PRODUTOS.findIndex(p => p.id == req.params.id)
 
   if (produtoIndex !== -1) {
-    // Substitui o objeto atual pelo novo
-    PRODUTOS[produtoIndex] = {
-      ...req.body,
-      id: PRODUTOS[produtoIndex].id
-    }
+    const produto = PRODUTOS[produtoIndex]
+    
+    // Atualizando os atributos do produto
+    produto.nome = req.body.nome
+    produto.valor = req.body.valor
+    
+    // Atualiza o produto no array
+    PRODUTOS[produtoIndex] = produto
 
     res.sendStatus(200)
   } else {
