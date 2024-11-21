@@ -60,8 +60,8 @@ app.put('/produtos/:id', (req, res) => {
     const produto = PRODUTOS[produtoIndex]
     
     // Atualizando os atributos do produto
-    produto.nome = req.body.nome
-    produto.valor = req.body.valor
+    produto.setNome(req.body.nome)
+    produto.setValor(req.body.valor)
     
     // Atualiza o produto no array
     PRODUTOS[produtoIndex] = produto
