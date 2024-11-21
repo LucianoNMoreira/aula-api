@@ -1,8 +1,12 @@
-require('dotenv').config()
-const Produto = require('./classes/produto.js')
+// require('dotenv').config()
+import dotenv from 'dotenv'
+import Produto from './classes/produto.js'
+import express from 'express'
+import cors from 'cors'
+// const Produto = require('./classes/produto.js')
 
-const express = require('express')
-const cors = require('cors');
+dotenv.config()
+
 
 const app = express()
 const PORTA = process.env.PORTA

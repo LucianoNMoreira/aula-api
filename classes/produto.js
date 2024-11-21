@@ -12,8 +12,7 @@ class Produto {
 
 }
 
-// export default Produto
-module.exports = Produto
+export default Produto
 
 // const produto = new Produto(null, 'Produto 1', 1000);
 // console.log(produto.nome)
