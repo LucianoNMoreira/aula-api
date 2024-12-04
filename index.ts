@@ -19,29 +19,32 @@ app.use(cors())
 app.use(express.json());
 
 app.get('/produtos', async (req, res) => {
-  const result = await db.query('select * from produtos')
-  console.log('result', result)
-  const produtos = result[0].map((r: any) => new Produto(r.id, r.nome, r.valor))
+  const [results, metadata] = await db.query('select * from produtos')
+  console.debug('meta', metadata)
+  console.debug('results', results)
+  const produtos = results.map((r: any) => new Produto(r.id, r.nome, r.valor))
   res.send(produtos)
 })
 
 app.post('/produtos', async (req, res) => {
   const produto = new Produto(undefined, req.body.nome, req.body.valor)
 
-  const result : any = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`)
-  console.debug('result', result)
-  produto.id = result[1].lastID
+  const [results, meta]: [any[], any] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`)
+  console.debug('meta', meta)
+  console.debug('results', results)
+  produto.id = meta.lastID
 
   res.send(produto)
 })
 
 app.get('/produtos/:id', async (req, res) => {
   // Encontra o protudo
-  const result: any = await db.query(`SELECT * FROM produtos where id = ${req.params.id}`)
-  console.debug('result', result)
-  const produto = new Produto(result[0][0].id, result[0][0].nome, result[0][0].valor)
-
-  if (produto) {
+  const [results, meta]: [any[], any] = await db.query(`SELECT * FROM produtos where id = ${req.params.id}`)
+  console.debug('meta', meta)
+  console.debug('results', results)
+  
+  if (results.length > 0) {
+    const produto = new Produto(results[0].id, results[0].nome, results[0].valor)
     // Retorna o produto
     res.send(produto)
   } else {
@@ -51,13 +54,17 @@ app.get('/produtos/:id', async (req, res) => {
 })
 
 app.put('/produtos/:id', async (req, res) => {
-  await db.query(`UPDATE produtos set nome="${req.body.nome}", valor=${req.body.valor} WHERE id = ${req.params.id}`)
+  const [results, meta]: [any[], any] = await db.query(`UPDATE produtos set nome="${req.body.nome}", valor=${req.body.valor} WHERE id = ${req.params.id}`)
+  console.debug('meta', meta)
+  console.debug('results', results)
   res.sendStatus(200)
 })
 
 // Deletar um produto pelo ID
 app.delete('/produtos/:id', async (req, res) => {
-  await db.query(`DELETE from produtos WHERE id = ${req.params.id}`)
+  const [results, meta]: [any[], any] = await db.query(`DELETE from produtos WHERE id = ${req.params.id}`)
+  console.debug('meta', meta)
+  console.debug('results', results)
   res.status(200).send()
 })
 
