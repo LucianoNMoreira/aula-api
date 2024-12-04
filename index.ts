@@ -1,42 +1,45 @@
 import dotenv from 'dotenv'
+dotenv.config()
+
 import Produto from './classes/produto'
 import express from 'express'
 import cors from 'cors'
 
-dotenv.config()
+import db, {testConnection} from './utils/bd'
+
+testConnection()
 
 const app = express()
 const PORTA = process.env.PORTA
 
 const PRODUTOS: Produto[] = []
+PRODUTOS.push(new Produto(undefined, 'teste', 100))
 
 app.use(cors())
 app.use(express.json());
 
-app.get('/produtos', (req, res) => {
-  res.send(PRODUTOS)
+app.get('/produtos', async (req, res) => {
+  const result = await db.query('select * from produtos')
+  console.log('result', result)
+  const produtos = result[0].map((r: any) => new Produto(r.id, r.nome, r.valor))
+  res.send(produtos)
 })
 
-app.post('/produtos', (req, res) => {
-  /**
-   * Obtém o último ID de produtos OU zero, caso não exista
-   * "as number[]" força o objeto a ser entendido como number[]. 
-   * Não é uma boa prática, mas conhecemos bem nossos dados de entrada
-   * */ 
-  const ids: number[] = PRODUTOS.map((p) => p.id) as number[]
-  let ultimoId = ids.length > 0 ? Math.max(...ids) : 0
-  const id = ultimoId + 1
+app.post('/produtos', async (req, res) => {
+  const produto = new Produto(undefined, req.body.nome, req.body.valor)
 
-  const produto = new Produto(id, req.body.nome, req.body.valor)
-
-  PRODUTOS.push(produto)
+  const result : any = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`)
+  console.debug('result', result)
+  produto.id = result[1].lastID
 
   res.send(produto)
 })
 
-app.get('/produtos/:id', (req, res) => {
+app.get('/produtos/:id', async (req, res) => {
   // Encontra o protudo
-  const produto = PRODUTOS.find((p) => p.id == Number(req.params.id))
+  const result: any = await db.query(`SELECT * FROM produtos where id = ${req.params.id}`)
+  console.debug('result', result)
+  const produto = new Produto(result[0][0].id, result[0][0].nome, result[0][0].valor)
 
   if (produto) {
     // Retorna o produto
@@ -47,39 +50,15 @@ app.get('/produtos/:id', (req, res) => {
   }
 })
 
-app.put('/produtos/:id', (req, res) => {
-  // Encontra o índice do produto
-  const produtoIndex = PRODUTOS.findIndex(p => p.id == Number(req.params.id))
-
-  if (produtoIndex !== -1) {
-    const produto = PRODUTOS[produtoIndex]
-    
-    // Atualizando os atributos do produto
-    produto.setNome(req.body.nome)
-    produto.setValor(req.body.valor)
-    
-    // Atualiza o produto no array
-    PRODUTOS[produtoIndex] = produto
-
-    res.sendStatus(200)
-  } else {
-    // Retorna status de "Página não encontrada"
-    res.status(404).send('Produto não encontrado')
-  }
+app.put('/produtos/:id', async (req, res) => {
+  await db.query(`UPDATE produtos set nome="${req.body.nome}", valor=${req.body.valor} WHERE id = ${req.params.id}`)
+  res.sendStatus(200)
 })
 
 // Deletar um produto pelo ID
-app.delete('/produtos/:id', (req, res) => {
-  const produtoIndex = PRODUTOS.findIndex(p => p.id == Number(req.params.id))
-
-  if (produtoIndex !== -1) {
-    // Remove o elemento do index
-    PRODUTOS.splice(produtoIndex, 1)
-    // Retorna status de sucesso
-    res.status(200).send()
-  } else {
-    res.status(404).send('Produto não encontrado')
-  }
+app.delete('/produtos/:id', async (req, res) => {
+  await db.query(`DELETE from produtos WHERE id = ${req.params.id}`)
+  res.status(200).send()
 })
 
 
