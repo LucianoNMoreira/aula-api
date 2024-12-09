@@ -8,18 +8,16 @@ import cors from 'cors'
 const app = express()
 const PORTA = process.env.PORTA
 
-const PRODUTOS: Produto[] = []
-
 app.use(cors())
 app.use(express.json());
 
 app.get('/produtos', async (req, res) => {
-  const produtos = Produto.findAll()
+  const produtos = await Produto.findAll()
   res.send(produtos)
 })
 
 app.post('/produtos', async (req, res) => {
-  const produto = Produto.create({
+  const produto = await Produto.create({
     nome: req.body.nome,
     valor: req.body.valor
   })
@@ -39,7 +37,7 @@ app.get('/produtos/:id', async (req, res) => {
 app.put('/produtos/:id', async (req, res) => {
   const produto = await Produto.findByPk(req.params.id)
   if (produto) {
-    produto.update({
+    await produto.update({
       nome: req.body.nome,
       valor: req.body.valor
     })
@@ -50,7 +48,7 @@ app.put('/produtos/:id', async (req, res) => {
 
 // Deletar um produto pelo ID
 app.delete('/produtos/:id', async (req, res) => {
-  Produto.destroy({
+  await Produto.destroy({
     where: {id: req.params.id}
   })
   res.status(200).send()

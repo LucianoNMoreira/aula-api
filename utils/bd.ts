@@ -1,13 +1,15 @@
-import { Sequelize } from '@sequelize/core'
-import { MySqlDialect } from '@sequelize/mysql'
+import { Sequelize } from 'sequelize'
 
-const sequelize = new Sequelize<MySqlDialect>({
-  dialect: MySqlDialect,
-  database: 'aula_api',
-  user: 'admin',
-  password: 'admin',
-  host: 'localhost',
-  port: 33302,
+const DB_HOST = 'localhost'
+const DB_NAME = 'aula_api'
+const DB_USER = 'admin'
+const DB_PASSWORD = 'admin'
+const DB_PORT = 33302
+
+const CONNECTION_URL = `mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
+
+const sequelize = new Sequelize(CONNECTION_URL, {
+  dialect: 'mysql',
   pool: {
     max: 10,        // Número máximo de conexões no pool
     min: 0,         // Número mínimo de conexões no pool
@@ -19,10 +21,7 @@ const sequelize = new Sequelize<MySqlDialect>({
 (async () => {
   try {
     await sequelize.authenticate()
-    console.log('BD conectado', process.env.SQLITE_DB)
-
-    // Sincronizar o banco de dados. Cria tabelas apenas se não existirem
-    await sequelize.sync({ force: false })
+    console.debug('BD conectado')
   } catch (error) {
     console.error('Erro:', error);
   }
