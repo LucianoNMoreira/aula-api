@@ -8,7 +8,7 @@ const sequelize = new Sequelize({
   password: 'admin',
   host: 'localhost',
   port: 33302,
-});
+})
 
 export async function testConnection() {
   try {
