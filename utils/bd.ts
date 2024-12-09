@@ -8,6 +8,12 @@ const sequelize = new Sequelize({
   password: 'admin',
   host: 'localhost',
   port: 33302,
+  pool: {
+    max: 10,        // Número máximo de conexões no pool
+    min: 0,         // Número mínimo de conexões no pool
+    acquire: 30000, // Tempo máximo (ms) que o pool tentará obter uma conexão
+    idle: 10000     // Tempo (ms) que uma conexão pode ficar ociosa antes de ser liberada
+  }
 })
 
 export async function testConnection() {
