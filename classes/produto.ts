@@ -61,6 +61,6 @@ Produto.init(
   {
     sequelize: db, // Instância do Sequelize
     tableName: 'produtos', // Nome da tabela no banco de dados
-    timestamps: false
+    timestamps: true
   }
 )

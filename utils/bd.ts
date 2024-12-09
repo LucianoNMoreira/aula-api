@@ -20,6 +20,7 @@ const sequelize = new Sequelize(CONNECTION_URL, {
 
 (async () => {
   try {
+    await sequelize.sync({force: false})
     await sequelize.authenticate()
     console.debug('BD conectado')
   } catch (error) {
