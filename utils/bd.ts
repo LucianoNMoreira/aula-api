@@ -1,7 +1,7 @@
 import { Sequelize } from '@sequelize/core'
 import { MySqlDialect } from '@sequelize/mysql'
 
-const sequelize = new Sequelize({
+const sequelize = new Sequelize<MySqlDialect>({
   dialect: MySqlDialect,
   database: 'aula_api',
   user: 'admin',
@@ -14,15 +14,18 @@ const sequelize = new Sequelize({
     acquire: 30000, // Tempo máximo (ms) que o pool tentará obter uma conexão
     idle: 10000     // Tempo (ms) que uma conexão pode ficar ociosa antes de ser liberada
   }
-})
+});
 
-export async function testConnection() {
+(async () => {
   try {
     await sequelize.authenticate()
     console.log('BD conectado', process.env.SQLITE_DB)
+
+    // Sincronizar o banco de dados. Cria tabelas apenas se não existirem
+    await sequelize.sync({ force: false })
   } catch (error) {
-    console.error('Erro ao conectar com o BD:', error)
+    console.error('Erro:', error);
   }
-}
+})();
 
 export default sequelize
