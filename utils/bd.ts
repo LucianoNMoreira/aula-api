@@ -1,8 +1,13 @@
-import { Sequelize } from "sequelize"
+import { Sequelize } from '@sequelize/core'
+import { MySqlDialect } from '@sequelize/mysql'
 
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: process.env.SQLITE_DB
+  dialect: MySqlDialect,
+  database: 'aula_api',
+  user: 'admin',
+  password: 'admin',
+  host: 'localhost',
+  port: 33302,
 });
 
 export async function testConnection() {

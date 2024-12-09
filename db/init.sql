@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS aula_api CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE aula_api;
+
+CREATE TABLE produtos (
+    id INT NOT NULL AUTO_INCREMENT UNIQUE,
+    nome VARCHAR(255) NOT NULL,
+    valor DECIMAL(10,2),
+    PRIMARY KEY (id)
+);

@@ -1,0 +1,17 @@
+services:
+
+  db:
+    container_name: aula_api_db
+    image: mariadb:10.4.26
+    restart: "no"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin
+      MARIADB_DATABASE: aula_api
+      TZ: UTC
+    ports:
+      - "33302:3306"
