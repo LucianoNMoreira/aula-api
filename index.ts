@@ -6,6 +6,7 @@ import express from 'express'
 import cors from 'cors'
 
 import db, {testConnection} from './utils/bd'
+import { QueryTypes } from 'sequelize'
 
 testConnection()
 
@@ -29,18 +30,28 @@ app.get('/produtos', async (req, res) => {
 app.post('/produtos', async (req, res) => {
   const produto = new Produto(undefined, req.body.nome, req.body.valor)
 
-  const [results, meta]: [any[], any] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`)
-  console.debug('meta', meta)
+  const results : any[] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`, {
+    replacements: [produto.nome, produto.valor],
+    type: QueryTypes.INSERT
+  })
+  produto.id = results[0]
+  // const [results, meta] : [any[], any] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`, {
+  //   replacements: [produto.nome, produto.valor]
+  // })
+  // console.debug('meta', meta)
+  // produto.id = meta.lastID
+
   console.debug('results', results)
-  produto.id = meta.lastID
 
   res.send(produto)
 })
 
 app.get('/produtos/:id', async (req, res) => {
   // Encontra o protudo
-  const [results, meta]: [any[], any] = await db.query(`SELECT * FROM produtos where id = ${req.params.id}`)
-  console.debug('meta', meta)
+  const results : any[] = await db.query(`SELECT * FROM produtos where id = ?`, {
+    replacements: [req.params.id],
+    type: QueryTypes.SELECT
+  })
   console.debug('results', results)
   
   if (results.length > 0) {
@@ -54,7 +65,13 @@ app.get('/produtos/:id', async (req, res) => {
 })
 
 app.put('/produtos/:id', async (req, res) => {
-  const [results, meta]: [any[], any] = await db.query(`UPDATE produtos set nome="${req.body.nome}", valor=${req.body.valor} WHERE id = ${req.params.id}`)
+  const [results, meta]: any[] = await db.query(`UPDATE produtos set nome=?, valor=? WHERE id = ?`, {
+    replacements: [
+      req.body.nome,
+      req.body.valor,
+      req.params.id
+    ]
+  })
   console.debug('meta', meta)
   console.debug('results', results)
   res.sendStatus(200)
@@ -62,7 +79,9 @@ app.put('/produtos/:id', async (req, res) => {
 
 // Deletar um produto pelo ID
 app.delete('/produtos/:id', async (req, res) => {
-  const [results, meta]: [any[], any] = await db.query(`DELETE from produtos WHERE id = ${req.params.id}`)
+  const [results, meta]: any[] = await db.query(`DELETE from produtos WHERE id = ?`, {
+    replacements: [req.params.id]
+  })
   console.debug('meta', meta)
   console.debug('results', results)
   res.status(200).send()
