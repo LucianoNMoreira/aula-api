@@ -13,9 +13,6 @@ testConnection()
 const app = express()
 const PORTA = process.env.PORTA
 
-const PRODUTOS: Produto[] = []
-PRODUTOS.push(new Produto(undefined, 'teste', 100))
-
 app.use(cors())
 app.use(express.json());
 
@@ -30,12 +27,13 @@ app.get('/produtos', async (req, res) => {
 app.post('/produtos', async (req, res) => {
   const produto = new Produto(undefined, req.body.nome, req.body.valor)
 
-  const results : any[] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`, {
+  const results : any[] = await db.query(`INSERT INTO produtos (nome, valor) VALUES (?, ?)`, {
     replacements: [produto.nome, produto.valor],
     type: QueryTypes.INSERT
   })
-  produto.id = results[0]
-  // const [results, meta] : [any[], any] = await db.query(`INSERT INTO produtos (nome, valor) VALUES ("${produto.nome}", ${produto.valor})`, {
+
+  // produto.id = results[0]
+  // const [results, meta] : [any[], any] = await db.query(`INSERT INTO produtos (nome, valor) VALUES (?, ?)`, {
   //   replacements: [produto.nome, produto.valor]
   // })
   // console.debug('meta', meta)
@@ -48,10 +46,10 @@ app.post('/produtos', async (req, res) => {
 
 app.get('/produtos/:id', async (req, res) => {
   // Encontra o protudo
-  const results : any[] = await db.query(`SELECT * FROM produtos where id = ?`, {
-    replacements: [req.params.id],
-    type: QueryTypes.SELECT
+  const result : any[] = await db.query(`SELECT * FROM produtos where id = ?`, {
+    replacements: [req.params.id]
   })
+  const results = result
   console.debug('results', results)
   
   if (results.length > 0) {
