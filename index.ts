@@ -4,6 +4,7 @@ dotenv.config()
 import Produto from './classes/produto'
 import express from 'express'
 import cors from 'cors'
+import './classes/associacoes_bd'
 
 const app = express()
 const PORTA = process.env.PORTA

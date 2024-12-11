@@ -1,4 +1,4 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from "sequelize"
+import { DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model } from "sequelize"
 import db from '../utils/bd'
 
 export interface IProduto {
@@ -11,7 +11,9 @@ export default class Produto extends Model<InferAttributes<Produto>, InferCreati
   declare id?: number | undefined
   declare nome: string
   declare valor: number
-  
+
+  declare categoriaId?: ForeignKey<number>
+
   setId(id: number) {
     this.id = id
   }
