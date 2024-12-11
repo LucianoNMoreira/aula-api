@@ -1,4 +1,4 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize"
+import { DataTypes, InferAttributes, InferCreationAttributes, Model, ModelDefined, Optional } from "sequelize"
 import db from '../utils/bd'
 
 export interface ICategoria {
@@ -6,21 +6,10 @@ export interface ICategoria {
   nome: string
 }
 
-export default class Categoria extends Model<InferAttributes<Categoria>, InferCreationAttributes<Categoria>> implements ICategoria {
-  declare id?: number
-  declare nome: string
+type ICategoriaCreationAttributes = Optional<ICategoria, 'id'>;
 
-  setNome(nome: string) {
-    this.nome = nome
-  }
-
-  getNome() {
-    return this.nome
-  }
-}
-
-// Inicialização do modelo com o Sequelize
-Categoria.init(
+const Categoria : ModelDefined<ICategoria, ICategoriaCreationAttributes> = db.define(
+  'categorias',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -33,8 +22,9 @@ Categoria.init(
     },
   },
   {
-    sequelize: db,
     tableName: 'categorias',
     timestamps: true
   }
 )
+
+export default Categoria
