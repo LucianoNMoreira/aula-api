@@ -41,7 +41,10 @@ app.get('/produtos/:id', async (req, res) => {
 
 app.get('/produtos/search/:nome', async (req, res) => {
   const produtos = await Produto.find({
-    nome: { $regex: `^${req.params.nome}`, $options: "i" }
+    nome: {
+      $regex: `^${req.params.nome}`,
+      $options: "i" // Case-insensitive
+    }
   })
   res.send(produtos)
 })
