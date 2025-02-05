@@ -17,12 +17,17 @@ app.get('/produtos', async (req, res) => {
 })
 
 app.post('/produtos', async (req, res) => {
+  try {
   const produto = await Produto.create({
     nome: req.body.nome,
     valor: req.body.valor
   })
 
   res.send(produto)
+  } catch (error) {
+    console.error('Erro:', error);
+    res.status(500).send(error)
+  }
 })
 
 app.get('/produtos/:id', async (req, res) => {
@@ -32,6 +37,13 @@ app.get('/produtos/:id', async (req, res) => {
   } else {
     res.status(404).send('Produto não encontrado')
   }
+})
+
+app.get('/produtos/search/:nome', async (req, res) => {
+  const produtos = await Produto.find({
+    nome: { $regex: `^${req.params.nome}`, $options: "i" }
+  })
+  res.send(produtos)
 })
 
 app.put('/produtos/:id', async (req, res) => {
