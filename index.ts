@@ -12,7 +12,7 @@ app.use(cors())
 app.use(express.json());
 
 app.get('/produtos', async (req, res) => {
-  const produtos = await Produto.find().lean()
+  const produtos = await Produto.find()
   res.send(produtos)
 })
 
