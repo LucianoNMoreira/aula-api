@@ -57,10 +57,41 @@ app.put('/produtos/:id', async (req, res) => {
 
 // Deletar um produto pelo ID
 app.delete('/produtos/:id', async (req, res) => {
-  await Produto.deleteOne({_id: req.params.id})
+  // // Não retorna o documento removido
+  // await Produto.deleteOne({_id: req.params.id})
+
+  // Retorna o documento removido
+  await Produto.findByIdAndDelete({ _id: req.params.id })
   res.status(200).send()
 })
 
+app.get('/relatorios/soma_valores', async (requestAnimationFrame, res) => {
+  try {
+    const resultado = await Produto.aggregate([
+      { $group: { _id: null, valorTotal: { $sum: "$valor" } } }
+    ]);
+
+    console.log('Resultado:', resultado);
+    res.status(200).send(resultado)
+  } catch (error) {
+    console.error('Erro na agregação:', error);
+    res.status(500).send(error)
+  }
+})
+
+app.get('/relatorios/qtde_produtos', async (requestAnimationFrame, res) => {
+  try {
+    const resultado = await Produto.aggregate([
+      { $count: 'quantidade' }
+    ]);
+
+    console.log('Resultado:', resultado);
+    res.status(200).send(resultado)
+  } catch (error) {
+    console.error('Erro na agregação:', error);
+    res.status(500).send(error)
+  }
+})
 
 app.listen(PORTA, () => {
   console.log(`API está ouvindo em http://localhost:${PORTA}`)
