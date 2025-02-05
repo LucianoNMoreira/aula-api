@@ -3,3 +3,6 @@ node_modules
 build
 loja.db
 db/data
+
+.DS_Store
+*/.DS_Store
